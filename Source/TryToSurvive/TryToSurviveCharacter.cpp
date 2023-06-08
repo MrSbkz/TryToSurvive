@@ -83,6 +83,11 @@ void ATryToSurviveCharacter::Look(const FInputActionValue& Value)
 void ATryToSurviveCharacter::OnSwitchBuildMode()
 {
 	BuildingComponent->IsBuildingMode = !BuildingComponent->IsBuildingMode;
+
+	if(!BuildingComponent->IsBuildingMode)
+	{
+		BuildingComponent->ResetBuilding();
+	}
 	
 	UE_LOG(LogTemp, Error, TEXT("[%S] Building mode is %S"), __FUNCTION__, BuildingComponent->IsBuildingMode ? "true" : "false");
 }

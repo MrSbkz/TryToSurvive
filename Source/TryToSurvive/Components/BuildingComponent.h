@@ -15,6 +15,8 @@ public:
 
 	void StartPreview();
 
+	void ResetBuilding();
+
 	void Build();
 
 	void SetPlayerController(APlayerController* PlayerController);

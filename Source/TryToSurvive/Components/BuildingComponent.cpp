@@ -27,13 +27,22 @@ void UBC_BuildingComponent::StartPreview()
 		FTransform Transform;
 		Transform.SetLocation(BuildingSpawnLocation);
 		CurrentBuildItem = GetWorld()->SpawnActor<AActor>(BlockClasses[0], Transform);
+		CurrentBuildItem->SetActorEnableCollision(false);
 	}
+}
+
+void UBC_BuildingComponent::ResetBuilding()
+{
+	CurrentBuildItem->Destroy();
+	CurrentBuildItem = nullptr;
 }
 
 void UBC_BuildingComponent::Build()
 {
 	IsBuildingMode = false;
-	CurrentBuildItem = nullptr;
+	FTransform Transform;
+	Transform.SetLocation(BuildingSpawnLocation);
+	AActor* Item = GetWorld()->SpawnActor<AActor>(BlockClasses[0], Transform);
 }
 
 void UBC_BuildingComponent::SetPlayerController(APlayerController* PlayerController)
