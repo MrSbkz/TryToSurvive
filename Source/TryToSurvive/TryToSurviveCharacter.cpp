@@ -26,6 +26,7 @@ ATryToSurviveCharacter::ATryToSurviveCharacter()
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 
+	BuildingComponent = CreateDefaultSubobject<UBC_BuildingComponent>("UBC_BuildingComponent");
 }
 
 void ATryToSurviveCharacter::BeginPlay()
@@ -38,11 +39,12 @@ void ATryToSurviveCharacter::BeginPlay()
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
-	}
 
+		BuildingComponent->SetPlayerController(PlayerController);
+	}
 }
 
-void ATryToSurviveCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+void ATryToSurviveCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
@@ -50,6 +52,8 @@ void ATryToSurviveCharacter::SetupPlayerInputComponent(class UInputComponent* Pl
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::Look);
+		EnhancedInputComponent->BindAction(BuildModeAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnSwitchBuildMode);
+		EnhancedInputComponent->BindAction(HitAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnHit);
 	}
 }
 
@@ -73,5 +77,20 @@ void ATryToSurviveCharacter::Look(const FInputActionValue& Value)
 	{
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void ATryToSurviveCharacter::OnSwitchBuildMode()
+{
+	BuildingComponent->IsBuildingMode = !BuildingComponent->IsBuildingMode;
+	
+	UE_LOG(LogTemp, Error, TEXT("[%S] Building mode is %S"), __FUNCTION__, BuildingComponent->IsBuildingMode ? "true" : "false");
+}
+
+void ATryToSurviveCharacter::OnHit()
+{
+	if(BuildingComponent->IsBuildingMode)
+	{
+		BuildingComponent->Build();
 	}
 }

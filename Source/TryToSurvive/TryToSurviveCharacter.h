@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputAction.h"
+#include "Components/BuildingComponent.h"
 #include "TryToSurviveCharacter.generated.h"
 
 class UInputComponent;
@@ -29,14 +30,21 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
 	USkeletalMeshComponent* Mesh1P;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Components)
+	UBC_BuildingComponent* BuildingComponent;
+
 protected:
-	virtual void BeginPlay();
+	virtual void BeginPlay() override;
+
+	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 
 	void Move(const FInputActionValue& Value);
 
 	void Look(const FInputActionValue& Value);
 
-	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
+	void OnSwitchBuildMode();
+
+	void OnHit();
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -50,5 +58,11 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* BuildModeAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* HitAction;
 };
 
