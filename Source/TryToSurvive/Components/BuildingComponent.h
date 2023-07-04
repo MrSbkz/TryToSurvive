@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "TryToSurvive/Models/Building/BuildingActorBase.h"
+#include "TryToSurvive/Models/Building/FBuildingMaterialPair.h"
 
 #include "BuildingComponent.generated.h"
 
@@ -21,6 +22,9 @@ public:
 	void Build();
 
 	void SetPlayerController(APlayerController* PlayerController);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Materials")
+	TArray<FBuildingMaterialPair> BuildingMaterialPairs;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Building")
 	TArray<TSubclassOf<ABuildingActorBase>> BuildingActors;
@@ -45,6 +49,9 @@ private:
 
 	UPROPERTY()
 	ATryToSurviveCharacter* Owner;
+
+	UPROPERTY()
+	UMaterialInstanceDynamic* CurrentMaterial;
 
 	FVector BuildingSpawnLocation;
 };

@@ -26,7 +26,12 @@ void UTTS_BuildingComponent::StartPreview()
 	{
 		FTransform Transform;
 		Transform.SetLocation(BuildingSpawnLocation);
-		CurrentBuildItem = GetWorld()->SpawnActor<ABuildingActorBase>(BuildingActors[0], Transform);
+		CurrentBuildItem = GetWorld()->SpawnActor<ABuildingActorBase>(BuildingMaterialPairs[0].BuildingItem, Transform);
+		if (CurrentBuildItem && IsValid(GetWorld()) && IsValid(BuildingMaterialPairs[0].Preview))
+		{
+			CurrentMaterial = UMaterialInstanceDynamic::Create(BuildingMaterialPairs[0].Preview, GetWorld());
+			CurrentBuildItem->MeshComponent->SetMaterial(0, CurrentMaterial);
+		}
 		CurrentBuildItem->SetActorEnableCollision(false);
 	}
 }
@@ -43,6 +48,14 @@ void UTTS_BuildingComponent::Build()
 	FTransform Transform;
 	Transform.SetLocation(BuildingSpawnLocation);
 	GetWorld()->SpawnActor<ABuildingActorBase>(BuildingActors[0], Transform);
+	if (CurrentBuildItem && IsValid(GetWorld()) && IsValid(BuildingMaterialPairs[0].Base))
+	{
+		CurrentMaterial = UMaterialInstanceDynamic::Create(BuildingMaterialPairs[0].Base, GetWorld());
+		CurrentBuildItem->MeshComponent->SetMaterial(0, CurrentMaterial);
+	}
+
+	CurrentBuildItem = nullptr;
+	CurrentMaterial = nullptr;
 }
 
 void UTTS_BuildingComponent::SetPlayerController(APlayerController* PlayerController)
@@ -64,6 +77,8 @@ void UTTS_BuildingComponent::TickComponent(
 
 		// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
 		BuildingSpawnLocation = PlayerLocation + SpawnRotation.RotateVector(BuildItemOffset);
+
+		// TODO: Replace this, z location won't be always 0
 		BuildingSpawnLocation.Z = 0.0f;
 		StartPreview();
 	}
