@@ -1,15 +1,16 @@
 ﻿#pragma once
+#include "TryToSurvive/Models/Building/BuildingActorBase.h"
 
 #include "BuildingComponent.generated.h"
 
 class ATryToSurviveCharacter;
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class UBC_BuildingComponent : public UActorComponent
+class UTTS_BuildingComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
-	UBC_BuildingComponent();
+	UTTS_BuildingComponent();
 
 	virtual void BeginPlay() override;
 
@@ -21,8 +22,8 @@ public:
 
 	void SetPlayerController(APlayerController* PlayerController);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Build")
-	TArray<TSubclassOf<AActor>> BlockClasses;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Building")
+	TArray<TSubclassOf<ABuildingActorBase>> BuildingActors;
 
 	bool IsBuildingMode = false;
 
@@ -37,7 +38,7 @@ protected:
 
 private:
 	UPROPERTY()
-	AActor* CurrentBuildItem;
+	ABuildingActorBase* CurrentBuildItem;
 
 	UPROPERTY()
 	APlayerController* CharacterPlayerController;

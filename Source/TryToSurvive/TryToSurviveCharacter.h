@@ -6,12 +6,7 @@
 #include "Components/BuildingComponent.h"
 #include "TryToSurviveCharacter.generated.h"
 
-class UInputComponent;
-class USkeletalMeshComponent;
-class USceneComponent;
 class UCameraComponent;
-class UAnimMontage;
-class USoundBase;
 
 UCLASS(config=Game)
 class ATryToSurviveCharacter : public ACharacter
@@ -31,7 +26,7 @@ public:
 	USkeletalMeshComponent* Mesh1P;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Components)
-	UBC_BuildingComponent* BuildingComponent;
+	UTTS_BuildingComponent* BuildingComponent;
 
 protected:
 	virtual void BeginPlay() override;

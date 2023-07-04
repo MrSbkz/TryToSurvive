@@ -2,19 +2,19 @@
 
 #include "TryToSurvive/TryToSurviveCharacter.h"
 
-UBC_BuildingComponent::UBC_BuildingComponent()
+UTTS_BuildingComponent::UTTS_BuildingComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UBC_BuildingComponent::BeginPlay()
+void UTTS_BuildingComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
 	Owner = Cast<ATryToSurviveCharacter>(GetOwner());
 }
 
-void UBC_BuildingComponent::StartPreview()
+void UTTS_BuildingComponent::StartPreview()
 {
 	if(!IsBuildingMode) return;
 	
@@ -26,31 +26,31 @@ void UBC_BuildingComponent::StartPreview()
 	{
 		FTransform Transform;
 		Transform.SetLocation(BuildingSpawnLocation);
-		CurrentBuildItem = GetWorld()->SpawnActor<AActor>(BlockClasses[0], Transform);
+		CurrentBuildItem = GetWorld()->SpawnActor<ABuildingActorBase>(BuildingActors[0], Transform);
 		CurrentBuildItem->SetActorEnableCollision(false);
 	}
 }
 
-void UBC_BuildingComponent::ResetBuilding()
+void UTTS_BuildingComponent::ResetBuilding()
 {
 	CurrentBuildItem->Destroy();
 	CurrentBuildItem = nullptr;
 }
 
-void UBC_BuildingComponent::Build()
+void UTTS_BuildingComponent::Build()
 {
 	IsBuildingMode = false;
 	FTransform Transform;
 	Transform.SetLocation(BuildingSpawnLocation);
-	AActor* Item = GetWorld()->SpawnActor<AActor>(BlockClasses[0], Transform);
+	GetWorld()->SpawnActor<ABuildingActorBase>(BuildingActors[0], Transform);
 }
 
-void UBC_BuildingComponent::SetPlayerController(APlayerController* PlayerController)
+void UTTS_BuildingComponent::SetPlayerController(APlayerController* PlayerController)
 {
 	CharacterPlayerController = PlayerController;
 }
 
-void UBC_BuildingComponent::TickComponent(
+void UTTS_BuildingComponent::TickComponent(
 	float DeltaTime,
 	ELevelTick TickType,
 	FActorComponentTickFunction* ThisTickFunction)
