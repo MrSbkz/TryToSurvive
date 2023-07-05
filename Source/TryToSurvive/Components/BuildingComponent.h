@@ -23,11 +23,12 @@ public:
 
 	void SetPlayerController(APlayerController* PlayerController);
 
+	void StartRotation();
+
+	void CompleteRotation();
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Materials")
 	TArray<FBuildingMaterialPair> BuildingMaterialPairs;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Building")
-	TArray<TSubclassOf<ABuildingActorBase>> BuildingActors;
 
 	bool IsBuildingMode = false;
 
@@ -54,4 +55,10 @@ private:
 	UMaterialInstanceDynamic* CurrentMaterial;
 
 	FVector BuildingSpawnLocation;
+
+	FRotator BuildingRotation;
+
+	bool IsRotating;
+
+	void CreateBuildingItem(UMaterialInterface* Material);
 };

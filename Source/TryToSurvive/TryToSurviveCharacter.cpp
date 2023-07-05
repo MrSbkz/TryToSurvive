@@ -54,6 +54,8 @@ void ATryToSurviveCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::Look);
 		EnhancedInputComponent->BindAction(BuildModeAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnSwitchBuildMode);
 		EnhancedInputComponent->BindAction(HitAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnHit);
+		EnhancedInputComponent->BindAction(RotateAction, ETriggerEvent::Started, this, &ATryToSurviveCharacter::OnRotationStart);
+		EnhancedInputComponent->BindAction(RotateAction, ETriggerEvent::Completed, this, &ATryToSurviveCharacter::OnRotationComplete);
 	}
 }
 
@@ -98,4 +100,16 @@ void ATryToSurviveCharacter::OnHit()
 	{
 		BuildingComponent->Build();
 	}
+}
+
+void ATryToSurviveCharacter::OnRotationStart()
+{
+	BuildingComponent->StartRotation();
+	UE_LOG(LogTemp, Error, TEXT("[%S] Rotation started"), __FUNCTION__);
+}
+
+void ATryToSurviveCharacter::OnRotationComplete()
+{
+	BuildingComponent->CompleteRotation();
+	UE_LOG(LogTemp, Error, TEXT("[%S] Rotation completed"), __FUNCTION__);
 }

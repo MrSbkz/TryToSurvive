@@ -11,7 +11,7 @@ class ABuildingActorBase : public AActorWithHealthBase
 public:
 	ABuildingActorBase()
 	{
-		MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("BC_MeshComponent");
+		MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("MeshComponent");
 		SetRootComponent(MeshComponent);
 	}
 	
