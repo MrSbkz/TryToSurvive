@@ -91,7 +91,7 @@ void ATryToSurviveCharacter::OnSwitchBuildMode()
 		BuildingComponent->ResetBuilding();
 	}
 	
-	UE_LOG(LogTemp, Error, TEXT("[%S] Building mode is %S"), __FUNCTION__, BuildingComponent->IsBuildingMode ? "true" : "false");
+	UE_LOG(LogTemp, Warning, TEXT("[%S] Building mode is %S"), __FUNCTION__, BuildingComponent->IsBuildingMode ? "true" : "false");
 }
 
 void ATryToSurviveCharacter::OnHit()
@@ -104,12 +104,10 @@ void ATryToSurviveCharacter::OnHit()
 
 void ATryToSurviveCharacter::OnRotationStart()
 {
-	BuildingComponent->StartRotation();
-	UE_LOG(LogTemp, Error, TEXT("[%S] Rotation started"), __FUNCTION__);
+	BuildingComponent->ProcessRotationMode();
 }
 
 void ATryToSurviveCharacter::OnRotationComplete()
 {
-	BuildingComponent->CompleteRotation();
-	UE_LOG(LogTemp, Error, TEXT("[%S] Rotation completed"), __FUNCTION__);
+	BuildingComponent->ProcessRotationMode();
 }

@@ -17,4 +17,10 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Components")
 	UStaticMeshComponent* MeshComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Materials")
+	UMaterialInterface* PreviewMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Materials")
+	UMaterialInterface* BaseMaterial;
 };

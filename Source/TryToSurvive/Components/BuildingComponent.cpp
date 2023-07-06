@@ -22,7 +22,7 @@ void UTTS_BuildingComponent::StartPreview()
 	}
 	else
 	{
-		CreateBuildingItem(BuildingMaterialPairs[0].Preview);
+		CreateBuildingItem(EBuildingMaterialType::Preview);
 		CurrentBuildItem->SetActorEnableCollision(false);
 	}
 }
@@ -38,7 +38,7 @@ void UTTS_BuildingComponent::Build()
 	IsBuildingMode = false;
 
 	CurrentBuildItem->SetActorEnableCollision(true);
-	CreateBuildingItem(BuildingMaterialPairs[0].Base);
+	CreateBuildingItem(EBuildingMaterialType::Base);
 
 	CurrentBuildItem = nullptr;
 	CurrentMaterial = nullptr;
@@ -49,19 +49,11 @@ void UTTS_BuildingComponent::SetPlayerController(APlayerController* PlayerContro
 	CharacterPlayerController = PlayerController;
 }
 
-void UTTS_BuildingComponent::StartRotation()
+void UTTS_BuildingComponent::ProcessRotationMode()
 {
 	if(IsBuildingMode)
 	{
-		IsRotating = true;
-	}
-}
-
-void UTTS_BuildingComponent::CompleteRotation()
-{
-	if(IsBuildingMode)
-	{
-		IsRotating = false;
+		IsRotating = !IsRotating;
 	}
 }
 
@@ -95,24 +87,35 @@ void UTTS_BuildingComponent::TickComponent(
 
 	if(IsRotating)
 	{
-		BuildingRotation = CurrentBuildItem->GetActorRotation();
+		FRotator BuildingRotation = CurrentBuildItem->GetActorRotation();
 		BuildingRotation.Yaw++;
 		CurrentBuildItem->SetActorRotation(BuildingRotation);
 	}
 }
 
-void UTTS_BuildingComponent::CreateBuildingItem(UMaterialInterface* Material)
+void UTTS_BuildingComponent::CreateBuildingItem(EBuildingMaterialType MaterialType)
 {
-	const FTransform Transform;
-
 	if(!CurrentBuildItem)
 	{
-		CurrentBuildItem = GetWorld()->SpawnActor<ABuildingActorBase>(BuildingMaterialPairs[0].BuildingItem, Transform);
+		const FTransform Transform;
+		CurrentBuildItem = GetWorld()->SpawnActor<ABuildingActorBase>(BuildingItems[0], Transform);
 	}
-
-	if (CurrentBuildItem && GetWorld() && Material)
+	
+	if (CurrentBuildItem && GetWorld() && CurrentBuildItem->PreviewMaterial && CurrentBuildItem->BaseMaterial)
 	{
-		CurrentMaterial = UMaterialInstanceDynamic::Create(Material, GetWorld());
+		switch (MaterialType)
+		{
+		case EBuildingMaterialType::Preview:
+			CurrentMaterial = UMaterialInstanceDynamic::Create(CurrentBuildItem->PreviewMaterial, GetWorld());
+			break;
+		case EBuildingMaterialType::Base:
+			CurrentMaterial = UMaterialInstanceDynamic::Create(CurrentBuildItem->BaseMaterial, GetWorld());
+			break;
+		default:
+			UE_LOG(LogTemp, Error, TEXT("[%S] Material type has not been set"), __FUNCTION__);
+			break;
+		}
+
 		CurrentBuildItem->MeshComponent->SetMaterial(0, CurrentMaterial);
 	}
 	else

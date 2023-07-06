@@ -1,6 +1,6 @@
 ﻿#pragma once
+#include "TryToSurvive/Enums/BuildingMaterialType.h"
 #include "TryToSurvive/Models/Building/BuildingActorBase.h"
-#include "TryToSurvive/Models/Building/FBuildingMaterialPair.h"
 
 #include "BuildingComponent.generated.h"
 
@@ -23,12 +23,10 @@ public:
 
 	void SetPlayerController(APlayerController* PlayerController);
 
-	void StartRotation();
+	void ProcessRotationMode();
 
-	void CompleteRotation();
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Materials")
-	TArray<FBuildingMaterialPair> BuildingMaterialPairs;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Building Items")
+	TArray<TSubclassOf<ABuildingActorBase>> BuildingItems;
 
 	bool IsBuildingMode = false;
 
@@ -56,9 +54,7 @@ private:
 
 	FVector BuildingSpawnLocation;
 
-	FRotator BuildingRotation;
-
 	bool IsRotating;
 
-	void CreateBuildingItem(UMaterialInterface* Material);
+	void CreateBuildingItem(EBuildingMaterialType MaterialType);
 };
