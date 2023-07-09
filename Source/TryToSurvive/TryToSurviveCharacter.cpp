@@ -54,8 +54,7 @@ void ATryToSurviveCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::Look);
 		EnhancedInputComponent->BindAction(BuildModeAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnSwitchBuildMode);
 		EnhancedInputComponent->BindAction(HitAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnHit);
-		EnhancedInputComponent->BindAction(RotateAction, ETriggerEvent::Started, this, &ATryToSurviveCharacter::OnRotationStart);
-		EnhancedInputComponent->BindAction(RotateAction, ETriggerEvent::Completed, this, &ATryToSurviveCharacter::OnRotationComplete);
+		EnhancedInputComponent->BindAction(RotateAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnRotationStart);
 	}
 }
 

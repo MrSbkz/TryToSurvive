@@ -15,8 +15,6 @@ public:
 
 	virtual void BeginPlay() override;
 
-	void StartPreview();
-
 	void ResetBuilding();
 
 	void Build();
@@ -27,6 +25,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Building Items")
 	TArray<TSubclassOf<ABuildingActorBase>> BuildingItems;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Trace")
+	float MaxBuildingDistance = 500.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Trace")
+	float GridSnapValue = 25.0f;
 
 	bool IsBuildingMode = false;
 
@@ -56,5 +60,21 @@ private:
 
 	bool IsRotating;
 
-	void CreateBuildingItem(EBuildingMaterialType MaterialType);
+	bool IsBuildingEnable;
+
+	FVector CurrentBuildingExtend;
+
+	void StartPreview(const FHitResult& HitResult);
+
+	void SetBuildingLocation(const FHitResult& HitResult);
+
+	void CreateBuildingItem(EBuildingMaterialType MaterialType, const FHitResult& HitResult);
+
+	void SetBuildingMaterial(EBuildingMaterialType MaterialType);
+
+	void DrawTrace(FHitResult& HitResult, TArray<AActor*> IgnoredActors);
+
+	void SetStartEndLocation(FVector& StartLocation, FVector& EndLocation);
+
+	bool IsBuildingOnGround();
 };

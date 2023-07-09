@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "Components/BoxComponent.h"
 #include "TryToSurvive/Models/ActorWithHealthBase.h"
 #include "BuildingActorBase.generated.h"
 
@@ -9,18 +10,37 @@ class ABuildingActorBase : public AActorWithHealthBase
 	GENERATED_BODY()
 
 public:
-	ABuildingActorBase()
-	{
-		MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("MeshComponent");
-		SetRootComponent(MeshComponent);
-	}
+	ABuildingActorBase();
+
+	virtual void BeginPlay() override;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Components")
 	UStaticMeshComponent* MeshComponent;
+	
+	// UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Components")
+	// UBoxComponent* BoxComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Materials")
 	UMaterialInterface* PreviewMaterial;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Materials")
 	UMaterialInterface* BaseMaterial;
+
+	bool IsBuildingEnable = true;
+
+	UFUNCTION()
+	void OnOverlapBegin(
+		UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnOverlapEnd(
+		UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex);
 };
