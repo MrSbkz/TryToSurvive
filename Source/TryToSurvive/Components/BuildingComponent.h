@@ -54,7 +54,7 @@ private:
 	ATryToSurviveCharacter* Owner;
 
 	UPROPERTY()
-	UMaterialInstanceDynamic* CurrentMaterial;
+	TArray<UMaterialInstanceDynamic*> CurrentMaterials;
 
 	FVector BuildingSpawnLocation;
 
@@ -77,4 +77,6 @@ private:
 	void SetStartEndLocation(FVector& StartLocation, FVector& EndLocation);
 
 	bool IsBuildingOnGround();
+
+	void SetCurrentMaterials(TArray<UMaterialInterface*> Materials);
 };

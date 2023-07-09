@@ -33,7 +33,7 @@ void UTTS_BuildingComponent::Build()
 	SetBuildingMaterial(EBuildingMaterialType::Base);
 
 	CurrentBuildItem = nullptr;
-	CurrentMaterial = nullptr;
+	CurrentMaterials.Empty();
 }
 
 void UTTS_BuildingComponent::SetPlayerController(APlayerController* PlayerController)
@@ -186,22 +186,26 @@ void UTTS_BuildingComponent::CreateBuildingItem(const EBuildingMaterialType Mate
 
 void UTTS_BuildingComponent::SetBuildingMaterial(const EBuildingMaterialType MaterialType)
 {
-	if (CurrentBuildItem && GetWorld() && CurrentBuildItem->PreviewMaterial && CurrentBuildItem->BaseMaterial)
+	if (CurrentBuildItem && GetWorld() && CurrentBuildItem->PreviewMaterials.Num() && CurrentBuildItem->BaseMaterials.Num())
 	{
+		CurrentMaterials.Empty();
 		switch (MaterialType)
 		{
 		case EBuildingMaterialType::Preview:
-			CurrentMaterial = UMaterialInstanceDynamic::Create(CurrentBuildItem->PreviewMaterial, GetWorld());
+			SetCurrentMaterials(CurrentBuildItem->PreviewMaterials);
 			break;
 		case EBuildingMaterialType::Base:
-			CurrentMaterial = UMaterialInstanceDynamic::Create(CurrentBuildItem->BaseMaterial, GetWorld());
+			SetCurrentMaterials(CurrentBuildItem->BaseMaterials);
 			break;
 		default:
 			UE_LOG(LogTemp, Error, TEXT("[%S] Material type has not been set"), __FUNCTION__);
 			break;
 		}
 
-		CurrentBuildItem->MeshComponent->SetMaterial(0, CurrentMaterial);
+		for (int i = 0; i < CurrentMaterials.Num(); i++)
+		{
+			CurrentBuildItem->MeshComponent->SetMaterial(i, CurrentMaterials[i]);
+		}
 	}
 	else
 	{
@@ -246,4 +250,12 @@ bool UTTS_BuildingComponent::IsBuildingOnGround()
 	CollisionParams.bTraceComplex = true;
 
 	return GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Visibility, CollisionParams);
+}
+
+void UTTS_BuildingComponent::SetCurrentMaterials(TArray<UMaterialInterface*> Materials)
+{
+	for(const auto Material : Materials)
+	{
+		CurrentMaterials.Add(UMaterialInstanceDynamic::Create(Material, GetWorld()));
+	}
 }

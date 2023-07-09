@@ -12,8 +12,8 @@ struct FBuildingMaterialPair
 	TSubclassOf<ABuildingActorBase> BuildingItem;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UMaterialInterface* Preview;
+	TArray<UMaterialInterface*> Preview;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UMaterialInterface* Base;
+	TArray<UMaterialInterface*> Base;
 };

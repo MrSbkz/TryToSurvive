@@ -21,10 +21,10 @@ public:
 	// UBoxComponent* BoxComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Materials")
-	UMaterialInterface* PreviewMaterial;
+	TArray<UMaterialInterface*> PreviewMaterials;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Materials")
-	UMaterialInterface* BaseMaterial;
+	TArray<UMaterialInterface*> BaseMaterials;
 
 	bool IsBuildingEnable = true;
 
