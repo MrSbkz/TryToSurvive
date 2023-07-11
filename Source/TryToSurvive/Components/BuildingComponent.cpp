@@ -76,13 +76,6 @@ void UBuildingComponent::TickComponent(
 	{
 		UE_LOG(LogTemp, Error, TEXT("[%S] Owner is nullptr"), __FUNCTION__);
 	}
-
-	if (IsRotating)
-	{
-		FRotator BuildingRotation = CurrentBuildItem->GetActorRotation();
-		BuildingRotation.Yaw += 30.0f;
-		CurrentBuildItem->SetActorRotation(BuildingRotation);
-	}
 }
 
 void UBuildingComponent::StartPreview(const FHitResult& HitResult)
@@ -94,7 +87,6 @@ void UBuildingComponent::StartPreview(const FHitResult& HitResult)
 	else
 	{
 		CreateBuildingItem(EBuildingMaterialType::Preview, HitResult);
-		CurrentBuildItem->MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	}
 }
 
@@ -203,8 +195,8 @@ void UBuildingComponent::SetCurrentMaterials(TArray<UMaterialInterface*> Materia
 
 void UBuildingComponent::SetPreviewMaterialsColor(const FLinearColor Color)
 {
-	for (int i = 0; i < CurrentMaterials.Num(); i++)
+	for (const auto Material : CurrentMaterials)
 	{
-		CurrentMaterials[i]->SetVectorParameterValue(FName("Preview Color"), Color);
+		Material->SetVectorParameterValue(FName("Preview Color"), Color);
 	}
 }

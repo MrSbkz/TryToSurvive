@@ -68,8 +68,6 @@ private:
 
 	FVector BuildingSpawnLocation;
 
-	bool IsRotating;
-
 	bool IsBuildingEnable;
 
 	FVector CurrentBuildingExtend;
