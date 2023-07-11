@@ -26,7 +26,7 @@ public:
 	USkeletalMeshComponent* Mesh1P;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Components)
-	UTTS_BuildingComponent* BuildingComponent;
+	UBuildingComponent* BuildingComponent;
 
 protected:
 	virtual void BeginPlay() override;

@@ -7,9 +7,6 @@
 
 ATryToSurviveCharacter::ATryToSurviveCharacter()
 {
-	// Character doesnt have a rifle at start
-	bHasRifle = false;
-
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
@@ -23,10 +20,9 @@ ATryToSurviveCharacter::ATryToSurviveCharacter()
 	Mesh1P->SetupAttachment(FirstPersonCameraComponent);
 	Mesh1P->bCastDynamicShadow = false;
 	Mesh1P->CastShadow = false;
-	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 
-	BuildingComponent = CreateDefaultSubobject<UTTS_BuildingComponent>("UTTS_BuildingComponent");
+	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>("BuildingComponent");
 }
 
 void ATryToSurviveCharacter::BeginPlay()
@@ -39,8 +35,6 @@ void ATryToSurviveCharacter::BeginPlay()
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
-
-		BuildingComponent->SetPlayerController(PlayerController);
 	}
 }
 
@@ -61,7 +55,7 @@ void ATryToSurviveCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 
 void ATryToSurviveCharacter::Move(const FInputActionValue& Value)
 {
-	FVector2D MovementVector = Value.Get<FVector2D>();
+	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
@@ -72,7 +66,7 @@ void ATryToSurviveCharacter::Move(const FInputActionValue& Value)
 
 void ATryToSurviveCharacter::Look(const FInputActionValue& Value)
 {
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
+	const FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
@@ -83,14 +77,12 @@ void ATryToSurviveCharacter::Look(const FInputActionValue& Value)
 
 void ATryToSurviveCharacter::OnSwitchBuildMode()
 {
-	BuildingComponent->IsBuildingMode = !BuildingComponent->IsBuildingMode;
+	BuildingComponent->SetBuildingMode();
 
 	if(!BuildingComponent->IsBuildingMode)
 	{
 		BuildingComponent->ResetBuilding();
 	}
-	
-	UE_LOG(LogTemp, Warning, TEXT("[%S] Building mode is %S"), __FUNCTION__, BuildingComponent->IsBuildingMode ? "true" : "false");
 }
 
 void ATryToSurviveCharacter::OnHit()
@@ -103,10 +95,10 @@ void ATryToSurviveCharacter::OnHit()
 
 void ATryToSurviveCharacter::OnRotationStart()
 {
-	BuildingComponent->ProcessRotationMode();
+	BuildingComponent->ProcessRotation();
 }
 
 void ATryToSurviveCharacter::OnRotationComplete()
 {
-	BuildingComponent->ProcessRotationMode();
+	BuildingComponent->ProcessRotation();
 }
