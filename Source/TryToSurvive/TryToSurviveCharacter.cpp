@@ -7,9 +7,6 @@
 
 ATryToSurviveCharacter::ATryToSurviveCharacter()
 {
-	// Character doesnt have a rifle at start
-	bHasRifle = false;
-
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
@@ -23,9 +20,9 @@ ATryToSurviveCharacter::ATryToSurviveCharacter()
 	Mesh1P->SetupAttachment(FirstPersonCameraComponent);
 	Mesh1P->bCastDynamicShadow = false;
 	Mesh1P->CastShadow = false;
-	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 
+	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>("BuildingComponent");
 }
 
 void ATryToSurviveCharacter::BeginPlay()
@@ -39,10 +36,9 @@ void ATryToSurviveCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-
 }
 
-void ATryToSurviveCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+void ATryToSurviveCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
@@ -50,13 +46,16 @@ void ATryToSurviveCharacter::SetupPlayerInputComponent(class UInputComponent* Pl
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::Look);
+		EnhancedInputComponent->BindAction(BuildModeAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnSwitchBuildMode);
+		EnhancedInputComponent->BindAction(HitAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnHit);
+		EnhancedInputComponent->BindAction(RotateAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnRotationStart);
 	}
 }
 
 
 void ATryToSurviveCharacter::Move(const FInputActionValue& Value)
 {
-	FVector2D MovementVector = Value.Get<FVector2D>();
+	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
@@ -67,11 +66,39 @@ void ATryToSurviveCharacter::Move(const FInputActionValue& Value)
 
 void ATryToSurviveCharacter::Look(const FInputActionValue& Value)
 {
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
+	const FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void ATryToSurviveCharacter::OnSwitchBuildMode()
+{
+	BuildingComponent->SetBuildingMode();
+
+	if(!BuildingComponent->IsBuildingMode)
+	{
+		BuildingComponent->ResetBuilding();
+	}
+}
+
+void ATryToSurviveCharacter::OnHit()
+{
+	if(BuildingComponent->IsBuildingMode)
+	{
+		BuildingComponent->Build();
+	}
+}
+
+void ATryToSurviveCharacter::OnRotationStart()
+{
+	BuildingComponent->ProcessRotation();
+}
+
+void ATryToSurviveCharacter::OnRotationComplete()
+{
+	BuildingComponent->ProcessRotation();
 }
