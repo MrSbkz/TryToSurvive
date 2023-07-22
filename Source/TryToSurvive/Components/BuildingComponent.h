@@ -1,6 +1,11 @@
 ﻿#pragma once
+
 #include "TryToSurvive/Enums/BuildingMaterialType.h"
 #include "TryToSurvive/Models/Building/BuildingActorBase.h"
+#include "TryToSurvive/Models/Building/BuildingItemInfo.h"
+#include "TryToSurvive/Widgets/BuildingMenu.h"
+#include "GameFramework/Character.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 #include "BuildingComponent.generated.h"
 
@@ -17,6 +22,8 @@ public:
 
 	void SetBuildingMode();
 
+	void CreateBuildingMenu();
+
 	void ResetBuilding();
 
 	void Build();
@@ -25,14 +32,20 @@ public:
 
 	bool IsBuildingMode = false;
 
+	UPROPERTY()
+	UBuildingMenu* BuildingMenu;
+
 protected:
 	virtual void TickComponent(
 		float DeltaTime,
 		ELevelTick TickType,
 		FActorComponentTickFunction* ThisTickFunction) override;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Building Menu")
+	TSubclassOf<UBuildingMenu> BuildingMenuClass;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Building Items")
-	TArray<TSubclassOf<ABuildingActorBase>> BuildingItems;
+	TArray<FBuildingItemInfo> BuildingItems;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Trace")
 	float MaxBuildingDistance = 500.0f;
@@ -57,11 +70,17 @@ private:
 
 	void SetPreviewMaterialsColor(FLinearColor Color);
 
+	UFUNCTION()
+	void SetCurrentBuildingItem(TSubclassOf<ABuildingActorBase>& BuildingItem);
+
+	UPROPERTY()
+	TSubclassOf<ABuildingActorBase> CurrentBuildItemClass;
+
 	UPROPERTY()
 	ABuildingActorBase* CurrentBuildItem;
 
 	UPROPERTY()
-	ATryToSurviveCharacter* Owner;
+	ACharacter* Owner;
 
 	UPROPERTY()
 	TArray<UMaterialInstanceDynamic*> CurrentMaterials;
@@ -69,6 +88,8 @@ private:
 	FVector BuildingSpawnLocation;
 
 	bool IsBuildingEnable;
+
+	bool IsBuildingMenuOpened = false;
 
 	FVector CurrentBuildingExtend;
 
