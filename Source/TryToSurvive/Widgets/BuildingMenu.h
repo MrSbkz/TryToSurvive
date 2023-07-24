@@ -4,7 +4,6 @@
 #include "WidgetMenuBase.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
-#include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "TryToSurvive/Models/Building/BuildingItemInfo.h"
 #include "BuildingMenu.generated.h"
@@ -24,6 +23,7 @@ public:
 
 	virtual void CloseMenu() override;
 
+protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	UVerticalBox* ButtonsVerticalBox;
 

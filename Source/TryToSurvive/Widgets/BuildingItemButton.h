@@ -10,9 +10,7 @@ UCLASS()
 class UBuildingItemButton : public UUserWidget
 {
 	GENERATED_BODY()
-public:
-	UBuildingItemButton(const FObjectInitializer& ObjectInitializer);
-	
+public:	
 	void SetMainButton();
 
 	UPROPERTY()

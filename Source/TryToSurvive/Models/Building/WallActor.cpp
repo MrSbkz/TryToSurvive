@@ -53,7 +53,7 @@ bool AWallActor::SetLocation(FVector& BuildingLocation)
 	return CanBuild();
 }
 
-bool AWallActor::CanBuild()
+bool AWallActor::CanBuild() const
 {
 	FHitResult OutHit;
 	FVector Start = GetActorLocation();

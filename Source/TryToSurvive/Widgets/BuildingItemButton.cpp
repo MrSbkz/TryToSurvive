@@ -2,16 +2,10 @@
 
 #include "Components/TextBlock.h"
 
-UBuildingItemButton::UBuildingItemButton(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
-{
-}
-
 void UBuildingItemButton::SetMainButton()
 {
-	MainButton = NewObject<UButton>(this);	
-	UTextBlock* TextBlock = NewObject<UTextBlock>(this);
-	if (TextBlock)
+	MainButton = NewObject<UButton>(this);
+	if (UTextBlock* TextBlock = NewObject<UTextBlock>(this))
 	{
 		TextBlock->SetText(FText::FromString(BuildingItem.Name));
 		MainButton->AddChild(TextBlock);

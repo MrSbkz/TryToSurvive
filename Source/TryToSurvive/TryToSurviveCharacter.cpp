@@ -26,7 +26,7 @@ void ATryToSurviveCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (const APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
 			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -44,11 +44,9 @@ void ATryToSurviveCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::Look);
-		EnhancedInputComponent->BindAction(BuildModeAction, ETriggerEvent::Triggered, this,
-		                                   &ATryToSurviveCharacter::OnSwitchBuildMode);
+		EnhancedInputComponent->BindAction(BuildModeAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnSwitchBuildMode);
 		EnhancedInputComponent->BindAction(HitAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnHit);
-		EnhancedInputComponent->BindAction(RotateAction, ETriggerEvent::Triggered, this,
-		                                   &ATryToSurviveCharacter::OnRotationStart);
+		EnhancedInputComponent->BindAction(RotateAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnRotationStart);
 	}
 }
 
@@ -82,10 +80,9 @@ void ATryToSurviveCharacter::OnSwitchBuildMode()
 		BuildingComponent->CreateBuildingMenu();
 	}
 
-	if (!BuildingComponent->BuildingMenu->SetIgnorePlayerMovement.IsBound())
+	if (BuildingComponent->BuildingMenu && !BuildingComponent->BuildingMenu->SetIgnorePlayerMovement.IsBound())
 	{
-		BuildingComponent->BuildingMenu->SetIgnorePlayerMovement.AddDynamic(
-			this, &ATryToSurviveCharacter::SetIgnorePlayerMovement);
+		BuildingComponent->BuildingMenu->SetIgnorePlayerMovement.AddDynamic(this, &ATryToSurviveCharacter::SetIgnorePlayerMovement);
 	}
 	BuildingComponent->SetBuildingMode();
 }
