@@ -1,9 +1,6 @@
 #include "TryToSurviveCharacter.h"
-#include "Animation/AnimInstance.h"
-#include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
+#include "Animation/AnimInstance.h"
 
 ATryToSurviveCharacter::ATryToSurviveCharacter()
 {
@@ -29,9 +26,10 @@ void ATryToSurviveCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (const APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
+			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
@@ -77,17 +75,21 @@ void ATryToSurviveCharacter::Look(const FInputActionValue& Value)
 
 void ATryToSurviveCharacter::OnSwitchBuildMode()
 {
-	BuildingComponent->SetBuildingMode();
-
-	if(!BuildingComponent->IsBuildingMode)
+	if (!BuildingComponent->BuildingMenu)
 	{
-		BuildingComponent->ResetBuilding();
+		BuildingComponent->CreateBuildingMenu();
 	}
+
+	if (BuildingComponent->BuildingMenu && !BuildingComponent->BuildingMenu->SetIgnorePlayerMovement.IsBound())
+	{
+		BuildingComponent->BuildingMenu->SetIgnorePlayerMovement.AddDynamic(this, &ATryToSurviveCharacter::SetIgnorePlayerMovement);
+	}
+	BuildingComponent->SetBuildingMode();
 }
 
 void ATryToSurviveCharacter::OnHit()
 {
-	if(BuildingComponent->IsBuildingMode)
+	if (BuildingComponent->IsBuildingMode)
 	{
 		BuildingComponent->Build();
 	}
@@ -101,4 +103,25 @@ void ATryToSurviveCharacter::OnRotationStart()
 void ATryToSurviveCharacter::OnRotationComplete()
 {
 	BuildingComponent->ProcessRotation();
+}
+
+void ATryToSurviveCharacter::SetIgnorePlayerMovement(bool IsEnabled)
+{
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		if (IsEnabled)
+		{
+			FInputModeGameAndUI InputMode;
+			InputMode.SetWidgetToFocus(BuildingComponent->BuildingMenu->TakeWidget());
+			PlayerController->SetInputMode(InputMode);
+		}
+		else
+		{
+			const FInputModeGameOnly InputMode;
+			PlayerController->SetInputMode(InputMode);
+		}
+		PlayerController->SetIgnoreLookInput(IsEnabled);
+		PlayerController->SetIgnoreMoveInput(IsEnabled);
+		PlayerController->SetShowMouseCursor(IsEnabled);
+	}
 }

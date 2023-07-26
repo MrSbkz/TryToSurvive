@@ -1,7 +1,5 @@
 ﻿#include "BuildingComponent.h"
 #include "Camera/CameraComponent.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "TryToSurvive/TryToSurviveCharacter.h"
 
 UBuildingComponent::UBuildingComponent()
 {
@@ -12,19 +10,46 @@ void UBuildingComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Owner = Cast<ATryToSurviveCharacter>(GetOwner());
+	Owner = Cast<ACharacter>(GetOwner());
 	CurrentPreviewColor = FLinearColor::White;
 }
 
 void UBuildingComponent::SetBuildingMode()
 {
-	IsBuildingMode = !IsBuildingMode;
+	IsBuildingMenuOpened = !IsBuildingMenuOpened;
+	if (BuildingMenu && !BuildingMenu->IsInViewport())
+	{
+		BuildingMenu->AddToViewport();
+	}
+
+	if (IsBuildingMenuOpened)
+	{
+		ResetBuilding();
+		BuildingMenu->OpenMenu();
+		BuildingMenu->SetMenuButtons(BuildingItems);
+	}
+	else
+	{
+		ResetBuilding();
+		BuildingMenu->CloseMenu();
+	}
+}
+
+void UBuildingComponent::CreateBuildingMenu()
+{
+	BuildingMenu = CreateWidget<UBuildingMenu>(GetWorld(), BuildingMenuClass);
+	BuildingMenu->OnBuildingItemChosen.AddDynamic(this, &UBuildingComponent::SetCurrentBuildingItem);
 }
 
 void UBuildingComponent::ResetBuilding()
 {
-	CurrentBuildItem->Destroy();
-	CurrentBuildItem = nullptr;
+	if(CurrentBuildItem)
+	{		
+		CurrentMaterials.Empty();
+		CurrentBuildItem->Destroy();
+		CurrentBuildItem = nullptr;
+		IsBuildingMode = false;
+	}
 }
 
 void UBuildingComponent::Build()
@@ -121,7 +146,7 @@ void UBuildingComponent::CreateBuildingItem(const EBuildingMaterialType Material
 {
 	FTransform Transform;
 	Transform.SetLocation(HitResult.Location);
-	CurrentBuildItem = GetWorld()->SpawnActor<ABuildingActorBase>(BuildingItems[0], Transform);
+	CurrentBuildItem = GetWorld()->SpawnActor<ABuildingActorBase>(CurrentBuildItemClass, Transform);
 
 	SetBuildingMaterial(MaterialType);
 }
@@ -199,4 +224,12 @@ void UBuildingComponent::SetPreviewMaterialsColor(const FLinearColor Color)
 	{
 		Material->SetVectorParameterValue(FName("Preview Color"), Color);
 	}
+}
+
+void UBuildingComponent::SetCurrentBuildingItem(TSubclassOf<ABuildingActorBase>& BuildingItem)
+{
+	CurrentBuildItemClass = BuildingItem;
+	IsBuildingMode = true;
+	IsBuildingMenuOpened = false;
+	BuildingMenu->CloseMenu();
 }

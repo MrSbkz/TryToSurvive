@@ -15,5 +15,5 @@ protected:
 	virtual void BeginPlay() override;
 	
 private:
-	bool CanBuild();
+	bool CanBuild() const;
 };

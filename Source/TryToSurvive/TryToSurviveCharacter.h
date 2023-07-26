@@ -2,8 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "InputAction.h"
 #include "Components/BuildingComponent.h"
+#include "Camera/CameraComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 #include "TryToSurviveCharacter.generated.h"
 
 class UCameraComponent;
@@ -46,10 +48,14 @@ protected:
 	void OnRotationComplete();
 
 private:
+	UFUNCTION()
+	void SetIgnorePlayerMovement(bool IsEnabled);
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	// ReSharper disable once UnrealHeaderToolParserError
 	UInputMappingContext* DefaultMappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
