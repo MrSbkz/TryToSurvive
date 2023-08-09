@@ -27,14 +27,12 @@ void AGateActor::BeginPlay()
 	Super::BeginPlay();
 
 	const FVector LeftDoorExtent = LeftDoorComponent->GetStaticMesh()->GetBoundingBox().GetExtent();
-	// BoxExtent.Y -= 10.0f;
 	LeftDoorComponent->BoxComponent->SetBoxExtent(LeftDoorExtent);
 	LeftDoorComponent->BoxComponent->SetRelativeLocation(FVector(0.0f, LeftDoorExtent.Y, LeftDoorExtent.Z));
 	LeftDoorComponent->BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	LeftDoorComponent->BoxComponent->SetCollisionObjectType(ECC_WorldStatic);
 
 	const FVector RightDoorExtent = LeftDoorComponent->GetStaticMesh()->GetBoundingBox().GetExtent();
-	// BoxExtent.Y -= 10.0f;
 	RightDoorComponent->BoxComponent->SetBoxExtent(RightDoorExtent);
 	RightDoorComponent->BoxComponent->SetRelativeLocation(FVector(0.0f, -LeftDoorExtent.Y, RightDoorExtent.Z));
 	RightDoorComponent->BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);

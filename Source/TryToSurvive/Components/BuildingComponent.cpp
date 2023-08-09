@@ -131,15 +131,6 @@ void UBuildingComponent::SetBuildingLocation(const FHitResult& HitResult)
 	}
 
 	IsBuildingEnable = CurrentBuildingItem->SetLocation(BuildingLocation);
-
-	// if (IsBuildingEnable && CurrentPreviewColor != FLinearColor::Green)
-	// {
-	// 	SetPreviewMaterialsColor(FLinearColor::Green);
-	// }
-	// else if (CurrentPreviewColor != FLinearColor::Red)
-	// {
-	// 	SetPreviewMaterialsColor(FLinearColor::Red);
-	// }
 }
 
 void UBuildingComponent::CreateBuildingItem(const FHitResult& HitResult)
@@ -150,38 +141,6 @@ void UBuildingComponent::CreateBuildingItem(const FHitResult& HitResult)
 	
 	CurrentBuildingItem->SetBuildingMaterials(EBuildingMaterialType::Preview);
 }
-
-// void UBuildingComponent::SetBuildingMaterial(const EBuildingMaterialType MaterialType)
-// {
-// 	if (CurrentBuildingItem &&
-// 		GetWorld() &&
-// 		CurrentBuildingItem->PreviewMaterials.Num() &&
-// 		CurrentBuildingItem->BaseMaterials.Num())
-// 	{
-// 		CurrentMaterials.Empty();
-// 		switch (MaterialType)
-// 		{
-// 		case EBuildingMaterialType::Preview:
-// 			SetCurrentMaterials(CurrentBuildingItem->PreviewMaterials);
-// 			break;
-// 		case EBuildingMaterialType::Base:
-// 			SetCurrentMaterials(CurrentBuildingItem->BaseMaterials);
-// 			break;
-// 		default:
-// 			UE_LOG(LogTemp, Error, TEXT("[%S] Material type has not been set"), __FUNCTION__);
-// 			break;
-// 		}
-//
-// 		for (int i = 0; i < CurrentMaterials.Num(); i++)
-// 		{
-// 			CurrentBuildingItem->MeshComponent->SetMaterial(i, CurrentMaterials[i]);
-// 		}
-// 	}
-// 	else
-// 	{
-// 		UE_LOG(LogTemp, Error, TEXT("[%S] Material has not been set"), __FUNCTION__);
-// 	}
-// }
 
 void UBuildingComponent::DrawTrace(FHitResult& HitResult, const TArray<AActor*> IgnoredActors) const
 {
@@ -209,22 +168,6 @@ void UBuildingComponent::SetStartEndLocation(FVector& StartLocation, FVector& En
 	EndLocation = StartLocation + Owner->FindComponentByClass<UCameraComponent>()->GetForwardVector() *
 		MaxBuildingDistance;
 }
-
-// void UBuildingComponent::SetCurrentMaterials(TArray<UMaterialInterface*> Materials)
-// {
-// 	for (const auto Material : Materials)
-// 	{
-// 		CurrentMaterials.Add(UMaterialInstanceDynamic::Create(Material, GetWorld()));
-// 	}
-// }
-
-// void UBuildingComponent::SetPreviewMaterialsColor(const FLinearColor Color)
-// {
-// 	for (const auto Material : CurrentMaterials)
-// 	{
-// 		Material->SetVectorParameterValue(FName("Preview Color"), Color);
-// 	}
-// }
 
 void UBuildingComponent::SetCurrentBuildingItem(TSubclassOf<ABuildingActorBase>& BuildingItem)
 {

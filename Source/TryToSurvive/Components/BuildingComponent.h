@@ -59,15 +59,9 @@ private:
 
 	void CreateBuildingItem(const FHitResult& HitResult);
 
-	// void SetBuildingMaterial(EBuildingMaterialType MaterialType);
-
 	void DrawTrace(FHitResult& HitResult, TArray<AActor*> IgnoredActors) const;
 
 	void SetStartEndLocation(FVector& StartLocation, FVector& EndLocation) const;
-
-	// void SetCurrentMaterials(TArray<UMaterialInterface*> Materials);
-
-	// void SetPreviewMaterialsColor(FLinearColor Color);
 
 	UFUNCTION()
 	void SetCurrentBuildingItem(TSubclassOf<ABuildingActorBase>& BuildingItem);
