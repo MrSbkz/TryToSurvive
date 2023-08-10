@@ -1,23 +1,25 @@
 #include "TryToSurviveCharacter.h"
-#include "Components/CapsuleComponent.h"
-#include "Animation/AnimInstance.h"
 
 ATryToSurviveCharacter::ATryToSurviveCharacter()
 {
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 
+	Mesh = GetMesh();
+	Mesh->SetRelativeLocation(FVector(0.0f, 0.f, -95.0f));
+
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
-	FirstPersonCameraComponent->SetRelativeLocation(FVector(-10.f, 0.f, 60.f)); // Position the camera
 	FirstPersonCameraComponent->bUsePawnControlRotation = true;
+	FirstPersonCameraComponent->SetRelativeLocation(FVector(22.0f, 0.f, 70.f)); // Position the camera
 
-	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
-	Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
-	Mesh1P->SetOnlyOwnerSee(true);
-	Mesh1P->SetupAttachment(FirstPersonCameraComponent);
-	Mesh1P->bCastDynamicShadow = false;
-	Mesh1P->CastShadow = false;
-	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
+	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArmComponent->SetupAttachment(FirstPersonCameraComponent);
+
+	ThirdPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("ThirdPersonCamera"));
+	ThirdPersonCameraComponent->SetupAttachment(SpringArmComponent);
+
+	SpringArmComponent->TargetArmLength = 300.0f;
+	SpringArmComponent->bUsePawnControlRotation = true;
 
 	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>("BuildingComponent");
 }
@@ -32,6 +34,11 @@ void ATryToSurviveCharacter::BeginPlay()
 			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+
+			ThirdPersonCameraComponent->Activate();
+			FirstPersonCameraComponent->Deactivate();
+
+			this->bUseControllerRotationYaw = false;
 		}
 	}
 }
@@ -47,9 +54,9 @@ void ATryToSurviveCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		EnhancedInputComponent->BindAction(BuildModeAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnSwitchBuildMode);
 		EnhancedInputComponent->BindAction(HitAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnHit);
 		EnhancedInputComponent->BindAction(RotateAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnRotationStart);
+		EnhancedInputComponent->BindAction(ToggleCameraAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnToggleCamera);
 	}
 }
-
 
 void ATryToSurviveCharacter::Move(const FInputActionValue& Value)
 {
@@ -73,6 +80,17 @@ void ATryToSurviveCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
+void ATryToSurviveCharacter::Chop()
+{
+
+	UAnimInstance* AnimInstance = Mesh->GetAnimInstance();
+	if (AnimInstance)
+	{
+		AnimInstance->Montage_Play(ChopAnimation);
+		UGameplayStatics::ApplyDamage(HarvestActor[0], 40.0f, nullptr, this, UDamageType::StaticClass());
+	}
+}
+
 void ATryToSurviveCharacter::OnSwitchBuildMode()
 {
 	if (!BuildingComponent->BuildingMenu)
@@ -93,6 +111,20 @@ void ATryToSurviveCharacter::OnHit()
 	{
 		BuildingComponent->Build();
 	}
+	else
+	{
+		if(isEnabledAttack)
+		{
+			switch (AttackState)
+			{
+			case EAttackState::Gather:
+				Chop();
+				break;
+			case EAttackState::Attack:
+				break;
+			}
+		}
+	}
 }
 
 void ATryToSurviveCharacter::OnRotationStart()
@@ -103,6 +135,24 @@ void ATryToSurviveCharacter::OnRotationStart()
 void ATryToSurviveCharacter::OnRotationComplete()
 {
 	BuildingComponent->ProcessRotation();
+}
+
+void ATryToSurviveCharacter::OnToggleCamera()
+{
+	if(ThirdPersonCameraComponent->IsActive())
+	{
+		ThirdPersonCameraComponent->Deactivate();
+		FirstPersonCameraComponent->Activate();
+
+		this->bUseControllerRotationYaw = true;
+	}
+	else
+	{
+		FirstPersonCameraComponent->Deactivate();
+		ThirdPersonCameraComponent->Activate();
+
+		this->bUseControllerRotationYaw = false;
+	}
 }
 
 void ATryToSurviveCharacter::SetIgnorePlayerMovement(bool IsEnabled)

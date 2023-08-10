@@ -25,7 +25,7 @@ void UTP_WeaponComponent::Fire()
 
 	if (FireAnimation != nullptr)
 	{
-		UAnimInstance* AnimInstance = Character->Mesh1P->GetAnimInstance();
+		UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 		if (AnimInstance != nullptr)
 		{
 			AnimInstance->Montage_Play(FireAnimation, 1.f);
@@ -42,7 +42,7 @@ void UTP_WeaponComponent::AttachWeapon(ATryToSurviveCharacter* TargetCharacter)
 	}
 
 	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
-	AttachToComponent(Character->Mesh1P, AttachmentRules, FName(TEXT("GripPoint")));
+	AttachToComponent(Character->GetMesh(), AttachmentRules, FName(TEXT("GripPoint")));
 
 	Character->bHasRifle = true;
 

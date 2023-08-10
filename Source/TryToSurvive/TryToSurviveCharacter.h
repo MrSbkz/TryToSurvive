@@ -1,11 +1,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
-#include "Components/BuildingComponent.h"
+#include "Enums/AttackState.h"
+#include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
+#include "GameFramework/Character.h"
 #include "EnhancedInputSubsystems.h"
+#include <Kismet/GameplayStatics.h>
+#include "Components/CapsuleComponent.h"
+#include "Components/BuildingComponent.h"
+#include <GameFramework/SpringArmComponent.h>
 #include "TryToSurviveCharacter.generated.h"
 
 class UCameraComponent;
@@ -18,17 +23,20 @@ class ATryToSurviveCharacter : public ACharacter
 public:
 	ATryToSurviveCharacter();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* LookAction;
+	EAttackState AttackState = EAttackState::Attack;
+	TArray<AActor*> HarvestActor;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon)
 	bool bHasRifle;
 
-	UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
-	USkeletalMeshComponent* Mesh1P;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Components)
 	UBuildingComponent* BuildingComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	USpringArmComponent* SpringArmComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
+	UAnimMontage* ChopAnimation;
 
 protected:
 	virtual void BeginPlay() override;
@@ -41,18 +49,35 @@ protected:
 
 	void OnSwitchBuildMode();
 
-	void OnHit();
+	virtual void OnHit();
 
 	void OnRotationStart();
 	
 	void OnRotationComplete();
 
-private:
-	UFUNCTION()
-	void SetIgnorePlayerMovement(bool IsEnabled);
-	
+	void OnToggleCamera();
+
+	bool isEnabledAttack = true;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	UCameraComponent* ThirdPersonCameraComponent;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
+
+private:
+	void Chop();
+
+	UFUNCTION()
+	void SetIgnorePlayerMovement(bool IsEnabled);
+
+	USkeletalMeshComponent* Mesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* LookAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* ToggleCameraAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	// ReSharper disable once UnrealHeaderToolParserError
