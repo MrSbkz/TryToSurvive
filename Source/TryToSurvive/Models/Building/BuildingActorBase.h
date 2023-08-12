@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-#include "Components/BoxComponent.h"
+#include "TryToSurvive/Components/BuildingStaticMeshComponent.h"
+#include "TryToSurvive/Enums/BuildingMaterialType.h"
 #include "TryToSurvive/Models/ActorWithHealthBase.h"
 #include "BuildingActorBase.generated.h"
 
@@ -12,17 +13,21 @@ class ABuildingActorBase : public AActorWithHealthBase
 public:
 	ABuildingActorBase();
 
-	virtual bool SetLocation(FVector& BuildingLocation);
+	bool SetLocation(FVector& BuildingLocation);
+
+	virtual void SetBuildingMaterials(const EBuildingMaterialType MaterialType);
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Components")
-	UStaticMeshComponent* MeshComponent;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Components")
-	UBoxComponent* BoxComponent;
+	UBuildingStaticMeshComponent* MeshComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Materials")
-	TArray<UMaterialInterface*> PreviewMaterials;
+protected:
+	virtual void SetPreviewMaterialsColor();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Materials")
-	TArray<UMaterialInterface*> BaseMaterials;
+	virtual void DefineLocation(FVector& BuildingLocation);
+
+	virtual bool CanBuild(){ return false; };
+
+	FLinearColor CurrentPreviewColor = FLinearColor::White;
+
+	bool IsBuildingEnable;
 };

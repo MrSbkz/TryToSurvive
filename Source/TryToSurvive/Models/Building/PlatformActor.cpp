@@ -1,20 +1,19 @@
-﻿#include "WallActor.h"
-#include "Kismet/KismetSystemLibrary.h"
+#include "PlatformActor.h"
 
-void AWallActor::BeginPlay()
+void APlatformActor::BeginPlay()
 {
 	Super::BeginPlay();
 
 	const FVector Extent = MeshComponent->GetStaticMesh()->GetBoundingBox().GetExtent();
 	FVector BoxExtent = Extent;
-	BoxExtent.Y -= 10.0f;
+	BoxExtent.Z -= 30.0f;
 	MeshComponent->BoxComponent->SetBoxExtent(BoxExtent);
-	MeshComponent->BoxComponent->SetRelativeLocation(FVector(0.0f, 0.0f, Extent.Z));
+	MeshComponent->BoxComponent->SetRelativeLocation(FVector(0.0f, 0.0f, Extent.Z - 30.0f));
 	MeshComponent->BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	MeshComponent->BoxComponent->SetCollisionObjectType(ECC_WorldStatic);
 }
 
-bool AWallActor::CanBuild()
+bool APlatformActor::CanBuild()
 {
 	FHitResult OutHit;
 	FVector Start = GetActorLocation();

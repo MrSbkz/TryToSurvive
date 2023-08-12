@@ -8,12 +8,8 @@ class AWallActor : public ABuildingActorBase
 {	
 	GENERATED_BODY()
 
-public:
-	virtual bool SetLocation(FVector& BuildingLocation) override;
-
 protected:
 	virtual void BeginPlay() override;
 	
-private:
-	bool CanBuild() const;
+	virtual bool CanBuild() override;
 };

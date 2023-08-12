@@ -1,5 +1,6 @@
 ﻿#include "BuildingComponent.h"
 #include "Camera/CameraComponent.h"
+#include "TryToSurvive/Enums/BuildingMaterialType.h"
 
 UBuildingComponent::UBuildingComponent()
 {
@@ -43,11 +44,11 @@ void UBuildingComponent::CreateBuildingMenu()
 
 void UBuildingComponent::ResetBuilding()
 {
-	if(CurrentBuildItem)
+	if(CurrentBuildingItem)
 	{		
 		CurrentMaterials.Empty();
-		CurrentBuildItem->Destroy();
-		CurrentBuildItem = nullptr;
+		CurrentBuildingItem->Destroy();
+		CurrentBuildingItem = nullptr;
 		IsBuildingMode = false;
 	}
 }
@@ -58,10 +59,9 @@ void UBuildingComponent::Build()
 
 	IsBuildingMode = false;
 
-	CurrentBuildItem->BoxComponent->SetCollisionResponseToAllChannels(ECR_Block);
-	SetBuildingMaterial(EBuildingMaterialType::Base);
+	CurrentBuildingItem->SetBuildingMaterials(EBuildingMaterialType::Base);
 
-	CurrentBuildItem = nullptr;
+	CurrentBuildingItem = nullptr;
 	CurrentMaterials.Empty();
 }
 
@@ -69,9 +69,9 @@ void UBuildingComponent::ProcessRotation() const
 {
 	if (IsBuildingMode)
 	{
-		FRotator BuildingRotation = CurrentBuildItem->GetActorRotation();
+		FRotator BuildingRotation = CurrentBuildingItem->GetActorRotation();
 		BuildingRotation.Yaw += 30.0f;
-		CurrentBuildItem->SetActorRotation(BuildingRotation);
+		CurrentBuildingItem->SetActorRotation(BuildingRotation);
 	}
 }
 
@@ -88,9 +88,9 @@ void UBuildingComponent::TickComponent(
 		{
 			FHitResult HitResult;
 			TArray<AActor*> IgnoredActors{Owner};
-			if (CurrentBuildItem)
+			if (CurrentBuildingItem)
 			{
-				IgnoredActors.Add(CurrentBuildItem);
+				IgnoredActors.Add(CurrentBuildingItem);
 			}
 
 			DrawTrace(HitResult, IgnoredActors);
@@ -105,13 +105,13 @@ void UBuildingComponent::TickComponent(
 
 void UBuildingComponent::StartPreview(const FHitResult& HitResult)
 {
-	if (CurrentBuildItem)
+	if (CurrentBuildingItem)
 	{
 		SetBuildingLocation(HitResult);
 	}
 	else
 	{
-		CreateBuildingItem(EBuildingMaterialType::Preview, HitResult);
+		CreateBuildingItem(HitResult);
 	}
 }
 
@@ -130,57 +130,16 @@ void UBuildingComponent::SetBuildingLocation(const FHitResult& HitResult)
 		BuildingLocation = EndLocation;
 	}
 
-	IsBuildingEnable = CurrentBuildItem->SetLocation(BuildingLocation);
-
-	if (IsBuildingEnable && CurrentPreviewColor != FLinearColor::Green)
-	{
-		SetPreviewMaterialsColor(FLinearColor::Green);
-	}
-	else if (CurrentPreviewColor != FLinearColor::Red)
-	{
-		SetPreviewMaterialsColor(FLinearColor::Red);
-	}
+	IsBuildingEnable = CurrentBuildingItem->SetLocation(BuildingLocation);
 }
 
-void UBuildingComponent::CreateBuildingItem(const EBuildingMaterialType MaterialType, const FHitResult& HitResult)
+void UBuildingComponent::CreateBuildingItem(const FHitResult& HitResult)
 {
 	FTransform Transform;
 	Transform.SetLocation(HitResult.Location);
-	CurrentBuildItem = GetWorld()->SpawnActor<ABuildingActorBase>(CurrentBuildItemClass, Transform);
-
-	SetBuildingMaterial(MaterialType);
-}
-
-void UBuildingComponent::SetBuildingMaterial(const EBuildingMaterialType MaterialType)
-{
-	if (CurrentBuildItem &&
-		GetWorld() &&
-		CurrentBuildItem->PreviewMaterials.Num() &&
-		CurrentBuildItem->BaseMaterials.Num())
-	{
-		CurrentMaterials.Empty();
-		switch (MaterialType)
-		{
-		case EBuildingMaterialType::Preview:
-			SetCurrentMaterials(CurrentBuildItem->PreviewMaterials);
-			break;
-		case EBuildingMaterialType::Base:
-			SetCurrentMaterials(CurrentBuildItem->BaseMaterials);
-			break;
-		default:
-			UE_LOG(LogTemp, Error, TEXT("[%S] Material type has not been set"), __FUNCTION__);
-			break;
-		}
-
-		for (int i = 0; i < CurrentMaterials.Num(); i++)
-		{
-			CurrentBuildItem->MeshComponent->SetMaterial(i, CurrentMaterials[i]);
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("[%S] Material has not been set"), __FUNCTION__);
-	}
+	CurrentBuildingItem = GetWorld()->SpawnActor<ABuildingActorBase>(CurrentBuildItemClass, Transform);
+	
+	CurrentBuildingItem->SetBuildingMaterials(EBuildingMaterialType::Preview);
 }
 
 void UBuildingComponent::DrawTrace(FHitResult& HitResult, const TArray<AActor*> IgnoredActors) const
@@ -208,22 +167,6 @@ void UBuildingComponent::SetStartEndLocation(FVector& StartLocation, FVector& En
 	StartLocation = Owner->GetActorLocation();
 	EndLocation = StartLocation + Owner->FindComponentByClass<UCameraComponent>()->GetForwardVector() *
 		MaxBuildingDistance;
-}
-
-void UBuildingComponent::SetCurrentMaterials(TArray<UMaterialInterface*> Materials)
-{
-	for (const auto Material : Materials)
-	{
-		CurrentMaterials.Add(UMaterialInstanceDynamic::Create(Material, GetWorld()));
-	}
-}
-
-void UBuildingComponent::SetPreviewMaterialsColor(const FLinearColor Color)
-{
-	for (const auto Material : CurrentMaterials)
-	{
-		Material->SetVectorParameterValue(FName("Preview Color"), Color);
-	}
 }
 
 void UBuildingComponent::SetCurrentBuildingItem(TSubclassOf<ABuildingActorBase>& BuildingItem)

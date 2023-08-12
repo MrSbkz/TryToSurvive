@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "TryToSurvive/Enums/BuildingMaterialType.h"
 #include "TryToSurvive/Models/Building/BuildingActorBase.h"
 #include "TryToSurvive/Models/Building/BuildingItemInfo.h"
 #include "TryToSurvive/Widgets/BuildingMenu.h"
@@ -58,17 +57,11 @@ private:
 
 	void SetBuildingLocation(const FHitResult& HitResult);
 
-	void CreateBuildingItem(EBuildingMaterialType MaterialType, const FHitResult& HitResult);
-
-	void SetBuildingMaterial(EBuildingMaterialType MaterialType);
+	void CreateBuildingItem(const FHitResult& HitResult);
 
 	void DrawTrace(FHitResult& HitResult, TArray<AActor*> IgnoredActors) const;
 
 	void SetStartEndLocation(FVector& StartLocation, FVector& EndLocation) const;
-
-	void SetCurrentMaterials(TArray<UMaterialInterface*> Materials);
-
-	void SetPreviewMaterialsColor(FLinearColor Color);
 
 	UFUNCTION()
 	void SetCurrentBuildingItem(TSubclassOf<ABuildingActorBase>& BuildingItem);
@@ -77,7 +70,7 @@ private:
 	TSubclassOf<ABuildingActorBase> CurrentBuildItemClass;
 
 	UPROPERTY()
-	ABuildingActorBase* CurrentBuildItem;
+	ABuildingActorBase* CurrentBuildingItem;
 
 	UPROPERTY()
 	ACharacter* Owner;
