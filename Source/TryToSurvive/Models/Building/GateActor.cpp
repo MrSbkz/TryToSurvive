@@ -22,10 +22,56 @@ void AGateActor::SetBuildingMaterials(const EBuildingMaterialType MaterialType)
 	RightDoorComponent->SetMaterials(MaterialType);
 }
 
+void AGateActor::Interact()
+{
+	if(IsGateOpened)
+	{
+		Timeline.Reverse();
+	}
+	else
+	{
+		Timeline.Play();
+	}
+
+	IsGateOpened = !IsGateOpened;
+	UE_LOG(LogTemp, Error, TEXT("[%S] Gate is %S"), __FUNCTION__, IsGateOpened ? "opened" : "closed");
+}
+
 void AGateActor::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetCollisions();
+
+	if(CurveFloat)
+	{
+		FOnTimelineFloat TimelineProgress;
+		TimelineProgress.BindDynamic(this, &AGateActor::OpenDoors);
+		Timeline.AddInterpFloat(CurveFloat, TimelineProgress);
+	}
+	
+	// LeftDoorComponent->AttachToComponent(MeshComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, "LeftHinge");
+	// RightDoorComponent->AttachToComponent(MeshComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, "RightHinge");
+	
+}
+
+void AGateActor::SetPreviewMaterialsColor()
+{
+	Super::SetPreviewMaterialsColor();
+
+	LeftDoorComponent->SetPreviewMaterialsColor(CurrentPreviewColor);
+	RightDoorComponent->SetPreviewMaterialsColor(CurrentPreviewColor);
+}
+
+void AGateActor::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	Timeline.TickTimeline(DeltaSeconds);
+}
+
+void AGateActor::SetCollisions()
+{
 	const FVector LeftDoorExtent = LeftDoorComponent->GetStaticMesh()->GetBoundingBox().GetExtent();
 	LeftDoorComponent->BoxComponent->SetBoxExtent(LeftDoorExtent);
 	LeftDoorComponent->BoxComponent->SetRelativeLocation(FVector(0.0f, LeftDoorExtent.Y, LeftDoorExtent.Z));
@@ -39,10 +85,10 @@ void AGateActor::BeginPlay()
 	RightDoorComponent->BoxComponent->SetCollisionObjectType(ECC_WorldStatic);
 }
 
-void AGateActor::SetPreviewMaterialsColor()
+void AGateActor::OpenDoors(float Value)
 {
-	Super::SetPreviewMaterialsColor();
-
-	LeftDoorComponent->SetPreviewMaterialsColor(CurrentPreviewColor);
-	RightDoorComponent->SetPreviewMaterialsColor(CurrentPreviewColor);
+	FRotator LeftDoorRotator = FRotator(0.0f, DoorsRotateAngle * Value, 0.0f);
+	FRotator RigthDoorRotator = FRotator(0.0f, DoorsRotateAngle * -Value, 0.0f);
+	LeftDoorComponent->SetRelativeRotation(LeftDoorRotator);
+	RightDoorComponent->SetRelativeRotation(RigthDoorRotator);
 }

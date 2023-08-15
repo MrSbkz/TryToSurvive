@@ -50,6 +50,10 @@ protected:
 private:
 	UFUNCTION()
 	void SetIgnorePlayerMovement(bool IsEnabled);
+
+	void OpenGates();
+
+	void SetStartEndLocation(FVector& StartLocation, FVector& EndLocation) const;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
@@ -72,5 +76,8 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* RotateAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* InteractAction;
 };
 

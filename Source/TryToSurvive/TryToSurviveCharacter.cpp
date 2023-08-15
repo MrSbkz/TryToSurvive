@@ -1,6 +1,7 @@
 #include "TryToSurviveCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Animation/AnimInstance.h"
+#include "Models/Building/GateActor.h"
 
 ATryToSurviveCharacter::ATryToSurviveCharacter()
 {
@@ -47,6 +48,7 @@ void ATryToSurviveCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		EnhancedInputComponent->BindAction(BuildModeAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnSwitchBuildMode);
 		EnhancedInputComponent->BindAction(HitAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnHit);
 		EnhancedInputComponent->BindAction(RotateAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OnRotationStart);
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ATryToSurviveCharacter::OpenGates);
 	}
 }
 
@@ -124,4 +126,26 @@ void ATryToSurviveCharacter::SetIgnorePlayerMovement(bool IsEnabled)
 		PlayerController->SetIgnoreMoveInput(IsEnabled);
 		PlayerController->SetShowMouseCursor(IsEnabled);
 	}
+}
+
+void ATryToSurviveCharacter::OpenGates()
+{
+	FHitResult HitResult;
+	FVector StartLocation(ForceInitToZero), EndLocation(ForceInitToZero);
+	SetStartEndLocation(StartLocation, EndLocation);
+
+	GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_EngineTraceChannel1);
+
+	auto res = HitResult.GetActor();
+	
+	if(AGateActor* Gate = Cast<AGateActor>(HitResult.GetActor()))
+	{
+		Gate->Interact();
+	}
+}
+
+void ATryToSurviveCharacter::SetStartEndLocation(FVector& StartLocation, FVector& EndLocation) const
+{
+	StartLocation = GetActorLocation();
+	EndLocation = StartLocation + FindComponentByClass<UCameraComponent>()->GetForwardVector() + 850.0f;
 }
