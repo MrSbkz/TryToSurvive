@@ -1,4 +1,6 @@
 #include "TryToSurviveCharacter.h"
+#include "Components/CapsuleComponent.h"
+#include "Animation/AnimInstance.h"
 
 ATryToSurviveCharacter::ATryToSurviveCharacter()
 {
@@ -31,6 +33,7 @@ ATryToSurviveCharacter::ATryToSurviveCharacter()
 	ThirdPersonCameraComponent->SetupAttachment(SpringArmComponent);
 
 	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>("BuildingComponent");
+	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>("InteractionComponent");
 	WeaponComponent = CreateDefaultSubobject<UTP_WeaponComponent>("WeaponComponent");
 }
 
@@ -112,7 +115,7 @@ void ATryToSurviveCharacter::OnHit()
 	}
 	else
 	{
-		if(isEnabledAttack)
+		if(IsEnabledAttack)
 		{
 			WeaponComponent->Attack(HarvestActor[0], 40.0f, AttackState);
 		}

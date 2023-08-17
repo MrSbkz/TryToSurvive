@@ -8,6 +8,7 @@
 #include "EnhancedInputComponent.h"
 #include "GameFramework/Character.h"
 #include "EnhancedInputSubsystems.h"
+#include "Components/InteractionComponent.h"
 #include <Kismet/GameplayStatics.h>
 #include "Components/CapsuleComponent.h"
 #include "Components/BuildingComponent.h"
@@ -25,6 +26,8 @@ public:
 	ATryToSurviveCharacter();
 
 	EAttackState AttackState = EAttackState::Attack;
+
+	UPROPERTY()
 	TArray<AActor*> HarvestActor;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon)
@@ -34,10 +37,14 @@ public:
 	UBuildingComponent* BuildingComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Components)
+	UInteractionComponent* InteractionComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Components)
 	UTP_WeaponComponent* WeaponComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components)
 	USpringArmComponent* SpringArmComponent;
+
 
 protected:
 	virtual void BeginPlay() override;
@@ -50,7 +57,7 @@ protected:
 
 	void OnSwitchBuildMode();
 
-	virtual void OnHit();
+	void OnHit();
 
 	void OnRotationStart();
 	
@@ -58,7 +65,7 @@ protected:
 
 	void OnToggleCamera();
 
-	bool isEnabledAttack = true;
+	bool IsEnabledAttack = true;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	UCameraComponent* ThirdPersonCameraComponent;

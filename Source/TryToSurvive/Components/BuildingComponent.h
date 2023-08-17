@@ -8,7 +8,6 @@
 
 #include "BuildingComponent.generated.h"
 
-class ATryToSurviveCharacter;
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class UBuildingComponent : public UActorComponent
 {
