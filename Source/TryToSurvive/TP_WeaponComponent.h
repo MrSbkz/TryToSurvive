@@ -1,45 +1,28 @@
 #pragma once
-
-#include "CoreMinimal.h"
-#include "Components/SkeletalMeshComponent.h"
-#include "InputAction.h"
+	
+#include "Engine/World.h" 
+#include "Enums/AttackState.h"
+#include <Kismet/GameplayStatics.h>
+#include "GameFramework/Character.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "TP_WeaponComponent.generated.h"
 
 class ATryToSurviveCharacter;
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class TRYTOSURVIVE_API UTP_WeaponComponent : public USkeletalMeshComponent
+class UTP_WeaponComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
-	UTP_WeaponComponent();
+	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintCallable, Category="Weapon")
-	void Fire();
+	void Attack(AActor* DamagedActor, float BaseDamage, EAttackState AttackState);
 
-	UFUNCTION(BlueprintCallable, Category="Weapon")
-	void AttachWeapon(ATryToSurviveCharacter* TargetCharacter);
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
-	USoundBase* FireSound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	UAnimMontage* FireAnimation;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
-	FVector MuzzleOffset;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputMappingContext* FireMappingContext;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* FireAction;
-
-protected:
-	UFUNCTION()
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Animation)
+	UAnimMontage* ChopAnimation;
 
 private:
-	ATryToSurviveCharacter* Character;
+	UPROPERTY()
+	ACharacter* Owner;
 };

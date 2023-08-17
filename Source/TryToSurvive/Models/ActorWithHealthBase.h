@@ -10,4 +10,6 @@ class AActorWithHealthBase : public AActor
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Property")
 	float Health;
+
+	virtual void ReceiveDamage(float damage);
 };
