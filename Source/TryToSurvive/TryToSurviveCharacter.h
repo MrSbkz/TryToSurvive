@@ -6,6 +6,7 @@
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Components/InteractionComponent.h"
 #include "TryToSurviveCharacter.generated.h"
 
 class UCameraComponent;
@@ -30,6 +31,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Components)
 	UBuildingComponent* BuildingComponent;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Components)
+	UInteractionComponent* InteractionComponent;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -50,10 +54,6 @@ protected:
 private:
 	UFUNCTION()
 	void SetIgnorePlayerMovement(bool IsEnabled);
-
-	void OpenGates();
-
-	void SetStartEndLocation(FVector& StartLocation, FVector& EndLocation) const;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
@@ -76,8 +76,5 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* RotateAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* InteractAction;
 };
 

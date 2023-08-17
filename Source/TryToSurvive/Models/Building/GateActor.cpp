@@ -22,7 +22,7 @@ void AGateActor::SetBuildingMaterials(const EBuildingMaterialType MaterialType)
 	RightDoorComponent->SetMaterials(MaterialType);
 }
 
-void AGateActor::Interact()
+void AGateActor::Interact_Implementation()
 {
 	if(IsGateOpened)
 	{
@@ -49,9 +49,6 @@ void AGateActor::BeginPlay()
 		TimelineProgress.BindDynamic(this, &AGateActor::OpenDoors);
 		Timeline.AddInterpFloat(CurveFloat, TimelineProgress);
 	}
-	
-	// LeftDoorComponent->AttachToComponent(MeshComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, "LeftHinge");
-	// RightDoorComponent->AttachToComponent(MeshComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, "RightHinge");
 	
 }
 
@@ -87,8 +84,8 @@ void AGateActor::SetCollisions()
 
 void AGateActor::OpenDoors(float Value)
 {
-	FRotator LeftDoorRotator = FRotator(0.0f, DoorsRotateAngle * Value, 0.0f);
-	FRotator RigthDoorRotator = FRotator(0.0f, DoorsRotateAngle * -Value, 0.0f);
+	const FRotator LeftDoorRotator = FRotator(0.0f, DoorsRotateAngle * Value, 0.0f);
+	const FRotator RightDoorRotator = FRotator(0.0f, DoorsRotateAngle * -Value, 0.0f);
 	LeftDoorComponent->SetRelativeRotation(LeftDoorRotator);
-	RightDoorComponent->SetRelativeRotation(RigthDoorRotator);
+	RightDoorComponent->SetRelativeRotation(RightDoorRotator);
 }

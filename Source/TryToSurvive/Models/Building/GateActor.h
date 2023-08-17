@@ -3,10 +3,11 @@
 #include "CoreMinimal.h"
 #include "WallActor.h"
 #include "Components/TimelineComponent.h"
+#include "TryToSurvive/Models/Interfaces/InteractiveActor.h"
 #include "GateActor.generated.h"
 
 UCLASS()
-class TRYTOSURVIVE_API AGateActor : public AWallActor
+class TRYTOSURVIVE_API AGateActor : public AWallActor, public IInteractiveActor
 {
 	GENERATED_BODY()
 public:
@@ -14,7 +15,7 @@ public:
 
 	virtual void SetBuildingMaterials(const EBuildingMaterialType MaterialType) override;
 
-	void Interact();
+	virtual void Interact_Implementation() override;
 	
 protected:
 	virtual void BeginPlay() override;
