@@ -36,6 +36,8 @@ void AChoppableTree::SetNumberOfLogs()
 
 void AChoppableTree::ReceiveDamage(float damage)
 {
+	Super::ReceiveDamage(damage);
+
 	if ( (Health - damage) <= 0)
 	{
 	    SpawnLocation = GetActorLocation();
@@ -46,10 +48,6 @@ void AChoppableTree::ReceiveDamage(float damage)
 		K2_DestroyActor();
 
 		SpawnDrop();
-	}
-	else
-	{
-		Health -= damage;
 	}
 }
 

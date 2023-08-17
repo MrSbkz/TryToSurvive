@@ -13,5 +13,5 @@ public:
 	ABaseWoodActor();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Components")
-		UStaticMeshComponent* MeshComponent;
+	UStaticMeshComponent* MeshComponent;
 };

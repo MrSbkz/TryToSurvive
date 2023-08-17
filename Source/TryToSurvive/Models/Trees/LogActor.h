@@ -11,6 +11,10 @@ class ALogActor : public ABaseWoodActor
 
 public:
 	ALogActor();
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Collision")
-		UCapsuleComponent* CapsuleComponent;
+	UCapsuleComponent* CapsuleComponent;
+
+protected:
+	virtual void BeginPlay() override;
 };

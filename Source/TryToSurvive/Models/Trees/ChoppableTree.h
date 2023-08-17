@@ -55,5 +55,5 @@ private:
 	void SpawnDrop();
 	void SpawnStump();
 	void SetNumberOfLogs();
-	void ReceiveDamage(float damage);
+	virtual void ReceiveDamage(float damage) override;
 };

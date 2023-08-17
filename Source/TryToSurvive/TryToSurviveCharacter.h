@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Enums/AttackState.h"
+#include "TP_WeaponComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
@@ -32,11 +33,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Components)
 	UBuildingComponent* BuildingComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-	USpringArmComponent* SpringArmComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Components)
+	UTP_WeaponComponent* WeaponComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
-	UAnimMontage* ChopAnimation;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components)
+	USpringArmComponent* SpringArmComponent;
 
 protected:
 	virtual void BeginPlay() override;
@@ -65,13 +66,17 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
 
-private:
-	void Chop();
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Sockets, meta = (AllowPrivateAccess = "true"))
+	USceneComponent* RightHandSocket;
 
+private:
 	UFUNCTION()
 	void SetIgnorePlayerMovement(bool IsEnabled);
 
 	USkeletalMeshComponent* Mesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = SkeletalMesh, meta = (AllowPrivateAccess = "true"))
+	USkeletalMeshComponent* WeaponMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;

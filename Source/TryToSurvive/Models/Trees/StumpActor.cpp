@@ -2,15 +2,20 @@
 
 AStumpActor::AStumpActor()
 {
-	SetRootComponent(MeshComponent);
+	BoxCollision = CreateDefaultSubobject<UBoxComponent>("CollisionComponent");
+	BoxCollision->SetupAttachment(MeshComponent);
+}
 
-	BoxComponent = CreateDefaultSubobject<UBoxComponent>("CollisionComponent");
-	BoxComponent->SetupAttachment(MeshComponent);
+void AStumpActor::BeginPlay()
+{
+	Super::BeginPlay();
 
-	BoxComponent->SetBoxExtent(FVector(22.0f, 22.0f, 22.0f));
-	BoxComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 22.0f));
-	BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	BoxComponent->SetCollisionObjectType(ECC_WorldStatic);
+	const FVector Extent = MeshComponent->GetStaticMesh()->GetBoundingBox().GetExtent();
+
+	BoxCollision->SetBoxExtent(FVector(Extent.X, Extent.Y, Extent.Y));
+	BoxCollision->SetRelativeLocation(FVector(0.0f, 0.0f, Extent.Rotation().Yaw));
+	BoxCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	BoxCollision->SetCollisionObjectType(ECC_WorldStatic);
 }
 
 

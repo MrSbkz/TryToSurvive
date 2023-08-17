@@ -13,5 +13,8 @@ public:
 	AStumpActor();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Collision")
-		UBoxComponent* BoxComponent;
+	UBoxComponent* BoxCollision;
+
+protected:
+	virtual void BeginPlay() override;
 };

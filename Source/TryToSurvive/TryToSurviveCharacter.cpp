@@ -7,6 +7,16 @@ ATryToSurviveCharacter::ATryToSurviveCharacter()
 	Mesh = GetMesh();
 	Mesh->SetRelativeLocation(FVector(0.0f, 0.f, -95.0f));
 
+	RightHandSocket = CreateDefaultSubobject<USceneComponent>(TEXT("RightHand"));
+	RightHandSocket->SetupAttachment(Mesh, TEXT("RightHandSocket"));
+	RightHandSocket->SetRelativeLocation(FVector(0.0f, 18.0f, 0.0f));
+
+	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
+	WeaponMesh->SetupAttachment(RightHandSocket);
+	WeaponMesh->SetRelativeLocation(FVector(0.0f, -6.0f, -1.0f));
+	WeaponMesh->AddRelativeRotation(FRotator(90.0f, 200.0f, 108.0f));
+	WeaponMesh->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.7f));
+
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
 	FirstPersonCameraComponent->bUsePawnControlRotation = true;
@@ -14,14 +24,14 @@ ATryToSurviveCharacter::ATryToSurviveCharacter()
 
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComponent->SetupAttachment(FirstPersonCameraComponent);
+	SpringArmComponent->TargetArmLength = 300.0f;
+	SpringArmComponent->bUsePawnControlRotation = true;
 
 	ThirdPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("ThirdPersonCamera"));
 	ThirdPersonCameraComponent->SetupAttachment(SpringArmComponent);
 
-	SpringArmComponent->TargetArmLength = 300.0f;
-	SpringArmComponent->bUsePawnControlRotation = true;
-
 	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>("BuildingComponent");
+	WeaponComponent = CreateDefaultSubobject<UTP_WeaponComponent>("WeaponComponent");
 }
 
 void ATryToSurviveCharacter::BeginPlay()
@@ -80,17 +90,6 @@ void ATryToSurviveCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
-void ATryToSurviveCharacter::Chop()
-{
-
-	UAnimInstance* AnimInstance = Mesh->GetAnimInstance();
-	if (AnimInstance)
-	{
-		AnimInstance->Montage_Play(ChopAnimation);
-		UGameplayStatics::ApplyDamage(HarvestActor[0], 40.0f, nullptr, this, UDamageType::StaticClass());
-	}
-}
-
 void ATryToSurviveCharacter::OnSwitchBuildMode()
 {
 	if (!BuildingComponent->BuildingMenu)
@@ -115,14 +114,7 @@ void ATryToSurviveCharacter::OnHit()
 	{
 		if(isEnabledAttack)
 		{
-			switch (AttackState)
-			{
-			case EAttackState::Gather:
-				Chop();
-				break;
-			case EAttackState::Attack:
-				break;
-			}
+			WeaponComponent->Attack(HarvestActor[0], 40.0f, AttackState);
 		}
 	}
 }
