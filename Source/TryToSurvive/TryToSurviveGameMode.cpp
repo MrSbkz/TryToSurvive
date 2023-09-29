@@ -5,7 +5,7 @@
 ATryToSurviveGameMode::ATryToSurviveGameMode()
 	: Super()
 {
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/FirstPerson/Blueprints/BP_FirstPersonCharacter"));
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/MainCharacter/Blueprints/BP_Warrior"));
 	DefaultPawnClass = PlayerPawnClassFinder.Class;
 
 }

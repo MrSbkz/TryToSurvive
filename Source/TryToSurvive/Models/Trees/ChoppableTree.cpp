@@ -6,14 +6,18 @@ AChoppableTree::AChoppableTree()
 	PrimaryActorTick.bCanEverTick = false;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SetRootComponent(Mesh);
 
-	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
-	CollisionBox->SetCollisionProfileName(TEXT("Overlap")); 
-	CollisionBox->SetRelativeLocation(FVector(0.0f, 0.0f, 54.0f));
-	CollisionBox->SetBoxExtent(FVector(132.0f, 132.0f, 48.0f));
-	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AChoppableTree::OnBeginOverlap);
-	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &AChoppableTree::OnEndOverlap);
-	CollisionBox->SetupAttachment(Mesh);
+	FVector Location = Mesh->GetComponentLocation();
+
+	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CollisionBox"));
+	CapsuleComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	CapsuleComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+	CapsuleComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+	CapsuleComponent->SetRelativeLocation(FVector(Location.X, Location.Y, 150.0f));
+	CapsuleComponent->SetCapsuleSize(48.0f, 300.0f);
+	CapsuleComponent->SetupAttachment(Mesh);
 
 	OnTakeAnyDamage.AddDynamic(this, &AChoppableTree::OnAnyDamage);
 }
@@ -22,11 +26,7 @@ void AChoppableTree::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (Cast<ATryToSurviveCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
-	{
-		CharacterRef = Cast<ATryToSurviveCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-		SetNumberOfLogs();
-	}
+	SetNumberOfLogs();
 }
 
 void AChoppableTree::SetNumberOfLogs()
@@ -74,32 +74,9 @@ void AChoppableTree::SpawnDrop()
 	}
 }
 
-void AChoppableTree::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if (UKismetSystemLibrary::IsValid(CharacterRef) && OtherActor == CharacterRef)
-	{
-		CharacterRef->AttackState = EAttackState::Gather;
-		CharacterRef->HarvestActor.Add(this);
-	}
-}
-
-void AChoppableTree::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	if (UKismetSystemLibrary::IsValid(CharacterRef) && OtherActor == CharacterRef)
-	{
-		CharacterRef->AttackState = EAttackState::Attack;
-		CharacterRef->HarvestActor.Remove(this);
-	}
-}
-
 void AChoppableTree::OnAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
 	AController* InstigatedBy, AActor* DamageCauser)
 {
-	if (UKismetSystemLibrary::IsValid(CharacterRef))
-	{
-		ReceiveDamage(Damage);
-	}
+	ReceiveDamage(Damage);
 }
 
