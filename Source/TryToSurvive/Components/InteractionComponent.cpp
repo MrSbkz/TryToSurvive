@@ -1,11 +1,5 @@
 #include "InteractionComponent.h"
 
-#include "EnhancedInputComponent.h"
-#include "Camera/CameraComponent.h"
-#include "GameFramework/Character.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "TryToSurvive/Models/Building/GateActor.h"
-
 UInteractionComponent::UInteractionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -49,7 +43,6 @@ void UInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 		CurrentInteractiveActor = nullptr;
 	}
 }
-
 
 void UInteractionComponent::DrawTrace(FHitResult& HitResult, const TArray<AActor*> IgnoredActors) const
 {

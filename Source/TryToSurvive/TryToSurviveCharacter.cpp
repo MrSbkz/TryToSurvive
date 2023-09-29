@@ -1,6 +1,4 @@
 #include "TryToSurviveCharacter.h"
-#include "Components/CapsuleComponent.h"
-#include "Animation/AnimInstance.h"
 
 ATryToSurviveCharacter::ATryToSurviveCharacter()
 {
@@ -12,12 +10,6 @@ ATryToSurviveCharacter::ATryToSurviveCharacter()
 	RightHandSocket = CreateDefaultSubobject<USceneComponent>(TEXT("RightHand"));
 	RightHandSocket->SetupAttachment(Mesh, TEXT("RightHandSocket"));
 	RightHandSocket->SetRelativeLocation(FVector(0.0f, 18.0f, 0.0f));
-
-	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
-	WeaponMesh->SetupAttachment(RightHandSocket);
-	WeaponMesh->SetRelativeLocation(FVector(0.0f, -6.0f, -1.0f));
-	WeaponMesh->AddRelativeRotation(FRotator(90.0f, 200.0f, 108.0f));
-	WeaponMesh->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.7f));
 
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
@@ -48,11 +40,13 @@ void ATryToSurviveCharacter::BeginPlay()
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 
-			ThirdPersonCameraComponent->Activate();
-			FirstPersonCameraComponent->Deactivate();
+			ThirdPersonCameraComponent->Deactivate();	
+			FirstPersonCameraComponent->Activate();
 
-			this->bUseControllerRotationYaw = false;
+			this->bUseControllerRotationYaw = true;
 		}
+
+		WeaponComponent->AttachWeapon(RightHandSocket, "RightHandSocket");
 	}
 }
 
@@ -117,7 +111,7 @@ void ATryToSurviveCharacter::OnHit()
 	{
 		if(IsEnabledAttack)
 		{
-			WeaponComponent->Attack(HarvestActor[0], 40.0f, AttackState);
+			WeaponComponent->Attack(40.0f);
 		}
 	}
 }

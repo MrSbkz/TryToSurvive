@@ -1,17 +1,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Enums/AttackState.h"
-#include "TP_WeaponComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/Character.h"
 #include "EnhancedInputSubsystems.h"
-#include "Components/InteractionComponent.h"
-#include <Kismet/GameplayStatics.h>
 #include "Components/CapsuleComponent.h"
 #include "Components/BuildingComponent.h"
+#include "Components/TP_WeaponComponent.h"
+#include "Components/InteractionComponent.h"
 #include <GameFramework/SpringArmComponent.h>
 #include "TryToSurviveCharacter.generated.h"
 
@@ -24,11 +22,6 @@ class ATryToSurviveCharacter : public ACharacter
 	
 public:
 	ATryToSurviveCharacter();
-
-	EAttackState AttackState = EAttackState::Attack;
-
-	UPROPERTY()
-	TArray<AActor*> HarvestActor;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon)
 	bool bHasRifle;
@@ -44,7 +37,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components)
 	USpringArmComponent* SpringArmComponent;
-
 
 protected:
 	virtual void BeginPlay() override;
@@ -81,9 +73,6 @@ private:
 	void SetIgnorePlayerMovement(bool IsEnabled);
 
 	USkeletalMeshComponent* Mesh;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = SkeletalMesh, meta = (AllowPrivateAccess = "true"))
-	USkeletalMeshComponent* WeaponMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;

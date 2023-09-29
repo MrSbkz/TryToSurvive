@@ -1,8 +1,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "Camera/CameraComponent.h"
+#include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "GameFramework/Character.h"
+#include "Components/ActorComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "TryToSurvive/Models/Building/GateActor.h"
 #include "InteractionComponent.generated.h"
 
 
@@ -15,7 +20,6 @@ public:
 	UInteractionComponent();
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 
 protected:
 	virtual void BeginPlay() override;
