@@ -8,7 +8,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include <TryToSurvive/Models/Trees/ChoppableTree.h>
 #include <TryToSurvive/Models/Weapon/BaseWeaponActor.h>
-#include <TryToSurvive/Models/Weapon/Hatchet/HatchetActor.h>
+#include <TryToSurvive/Models/Weapon/Axe/AxeActor.h>
 #include "TP_WeaponComponent.generated.h"
 
 class ATryToSurviveCharacter;
@@ -40,7 +40,7 @@ protected:
 	UInputMappingContext* WeaponMappingContext;
 
 private:
-	AHatchetActor* WeaponInHand;
+	ABaseWeaponActor* WeaponInHand;
 	
 	UPROPERTY()
 	ACharacter* Owner;

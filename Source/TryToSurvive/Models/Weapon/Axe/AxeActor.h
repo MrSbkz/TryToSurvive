@@ -4,15 +4,15 @@
 #include "GameFramework/Actor.h"
 #include <Components/CapsuleComponent.h>
 #include <TryToSurvive/Models/Weapon/BaseWeaponActor.h>
-#include "HatchetActor.generated.h"
+#include "AxeActor.generated.h"
 
 UCLASS()
-class TRYTOSURVIVE_API AHatchetActor : public ABaseWeaponActor
+class TRYTOSURVIVE_API AAxeActor : public ABaseWeaponActor
 {
 	GENERATED_BODY()
-	
+
 public:
-	AHatchetActor();
+	AAxeActor();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Collision)
 	UCapsuleComponent* CapsuleComponent;

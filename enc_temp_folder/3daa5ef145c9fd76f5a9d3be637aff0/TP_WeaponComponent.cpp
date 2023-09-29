@@ -22,7 +22,7 @@ void UTP_WeaponComponent::AttachWeapon(USceneComponent* WeaponSocket, FName Sock
 			WeaponInHand->AttachToComponent(WeaponSocket, FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
 			WeaponInHand->SetActorRelativeRotation(FRotator(90.0f, 200.0f, 108.0f));
 			WeaponInHand->SetActorRelativeLocation(FVector(0.0f, -6.0f, -1.0f));
-			WeaponInHand->SetActorRelativeScale3D(FVector(0.5f, 0.5f, 0.7f));
+			////WeaponInHand->SetActorRelativeScale3D(FVector(0.5f, 0.5f, 0.7f));
 		}
 	}
 }
